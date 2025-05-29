@@ -54,7 +54,7 @@ videos_router.get('/:id', (req: Request, res: Response) => {
 
 
 
-videos_router.post('/', (req: Request<{}, {},CreateVideoInputModel>, res: Response) => {
+videos_router.post('/', (req: Request, res: Response) => {
     let gatheredErrors: APIErrorResult = {errorMessages:[]}
     if (!req.body.title.trim() || req.body.title.trim().length>40 || typeof req.body.title!=='string'){
         gatheredErrors.errorMessages.push({
@@ -88,7 +88,7 @@ videos_router.post('/', (req: Request<{}, {},CreateVideoInputModel>, res: Respon
 })
 
 
-videos_router.put('/:id', (req: Request<{id:string}, {},UpdateVideoInputModel>, res: Response) => {
+videos_router.put('/:id', (req: Request, res: Response) => {
     let updatedId: number = NaN
     for (const videoId in videos){
         if (+req.params.id === videos[videoId].id) {
@@ -147,7 +147,7 @@ videos_router.delete('/:id', (req: Request, res: Response) => {
     const searchId = +req.params.id
     for (let videoId in videos){
         if (videos[videoId].id === searchId){
-            videos.slice(+videoId,1)
+            videos=videos.slice(+videoId,1)
             res.sendStatus(204)
             return
         }

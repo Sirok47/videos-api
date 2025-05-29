@@ -1,9 +1,10 @@
 import {CreateVideoInputModel, Resolutions, UpdateVideoInputModel} from "../src/models/video_model";
-import {videos} from "../src/routers/videos_router";
-import {app} from "../src";
-
+import {videos, videos_router} from "../src/routers/videos_router";
+const express = require('express')
 const request = require("supertest");
-
+const app = express()
+app.use(express.json())
+app.use("/videos", videos_router)
 describe("/videos", () => {
 
     it("should return 200 and [2 elements]",async ()=>{

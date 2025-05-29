@@ -107,7 +107,7 @@ videos_router.put('/:id', (req: Request, res: Response) => {
             field:"title"
         })
     }
-    if (!req.body.author || req.body.author.length>20 || typeof req.body.title!=='string'){
+    if (!req.body.author || req.body.author.length>20 || typeof req.body.author!=='string'){
         gatheredErrors.errorMessages.push({
             message:"Invalid passed value",
             field:"author"

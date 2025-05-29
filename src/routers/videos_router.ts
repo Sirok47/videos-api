@@ -126,6 +126,13 @@ videos_router.put('/:id', (req: Request, res: Response) => {
             field:"minAgeRestriction"
         })
     }
+    if (isNaN(new Date(req.body.publicationDate).getTime()) || typeof req.body.publicationDate !== "string"){
+        gatheredErrors.errorsMessages.push({
+            message:"Invalid passed value",
+            field:"publicationDate"
+        })
+    }
+
     if (gatheredErrors.errorsMessages.length>0){
         res.status(400).send(gatheredErrors)
         return

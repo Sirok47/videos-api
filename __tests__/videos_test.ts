@@ -45,7 +45,7 @@ describe("/videos", () => {
         await request(app)
             .post("/videos")
             .send(invalidVideo)
-            .expect(400,{errorMessages:[
+            .expect(400,{errorsMessages:[
                     {
                         message:"Invalid passed value",
                         field:"title"
@@ -85,7 +85,7 @@ describe("/videos", () => {
             availableResolutions: [Resolutions.P144, Resolutions.P360, Resolutions.P1080],
             canBeDownloaded: true,
             minAgeRestriction: 10,
-            publicationDate: ""
+            publicationDate: "2025-05-30T23:20:38.530Z"
         }
         await request(app)
             .put("/videos/2")

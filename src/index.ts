@@ -2,7 +2,7 @@ import {clearDB, videos, videos_router} from "./routers/videos_router";
 import {Request, Response} from "express";
 
 const express = require('express')
-export const app = express()
+const app = express()
 const port = 3001
 
 app.use(express.json())

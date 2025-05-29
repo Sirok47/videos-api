@@ -55,21 +55,21 @@ videos_router.get('/:id', (req: Request, res: Response) => {
 
 
 videos_router.post('/', (req: Request, res: Response) => {
-    let gatheredErrors: APIErrorResult = {errorMessages:[]}
+    let gatheredErrors: APIErrorResult = {errorsMessages:[]}
     if (!req.body.title || req.body.title.length>40 || typeof req.body.title!=='string'){
-        gatheredErrors.errorMessages.push({
+        gatheredErrors.errorsMessages.push({
             message:"Invalid passed value",
             field:"title"
         })
     }
     if (!req.body.author || req.body.author.length>20 || typeof req.body.author!=='string'){
-        gatheredErrors.errorMessages.push({
+        gatheredErrors.errorsMessages.push({
             message:"Invalid passed value",
             field:"author"
         })
     }
     const parsedResolutions: Resolutions[] = validateResolutions(req.body.availableResolutions,gatheredErrors)
-    if (gatheredErrors.errorMessages.length>0){
+    if (gatheredErrors.errorsMessages.length>0){
         res.status(400).send(gatheredErrors)
         return
     }
@@ -96,37 +96,37 @@ videos_router.put('/:id', (req: Request, res: Response) => {
             updatedId = +videoId
         }
     }
-    if (!updatedId){
+    if (isNaN(updatedId)){
         res.sendStatus(404)
         return
     }
-    let gatheredErrors: APIErrorResult = {errorMessages:[]}
+    let gatheredErrors: APIErrorResult = {errorsMessages:[]}
     if (!req.body.title || req.body.title.length>40 || typeof req.body.title!=='string'){
-        gatheredErrors.errorMessages.push({
+        gatheredErrors.errorsMessages.push({
             message:"Invalid passed value",
             field:"title"
         })
     }
     if (!req.body.author || req.body.author.length>20 || typeof req.body.author!=='string'){
-        gatheredErrors.errorMessages.push({
+        gatheredErrors.errorsMessages.push({
             message:"Invalid passed value",
             field:"author"
         })
     }
     const parsedResolutions: Resolutions[] = validateResolutions(req.body.availableResolutions,gatheredErrors)
     if (typeof req.body.canBeDownloaded !== "boolean"){
-        gatheredErrors.errorMessages.push({
+        gatheredErrors.errorsMessages.push({
             message:"Invalid passed value",
             field:"canBeDownloaded"
         })
     }
     if ((req.body.minAgeRestriction>18 || req.body.minAgeRestriction<1)&&req.body.minAgeRestriction){
-        gatheredErrors.errorMessages.push({
+        gatheredErrors.errorsMessages.push({
             message:"Invalid passed value",
             field:"minAgeRestriction"
         })
     }
-    if (gatheredErrors.errorMessages.length>0){
+    if (gatheredErrors.errorsMessages.length>0){
         res.status(400).send(gatheredErrors)
         return
     }

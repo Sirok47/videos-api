@@ -6,7 +6,7 @@ export function validateResolutions(passedValues: string[], gatheredErrors: APIE
     for (let value of passedValues){
         const foundResolution = Object.values(Resolutions).find((e)=>e === value)
         if (!foundResolution){
-            gatheredErrors.errorMessages.push({
+            gatheredErrors.errorsMessages.push({
                 message: "Passed value "+ value +" not supported",
                 field: "availableResolutions"
             })

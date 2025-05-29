@@ -4,5 +4,5 @@ export type FieldError = {
 }
 
 export type APIErrorResult = {
-    errorMessages: FieldError[]
+    errorsMessages: FieldError[]
 }

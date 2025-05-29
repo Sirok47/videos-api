@@ -56,13 +56,13 @@ videos_router.get('/:id', (req: Request, res: Response) => {
 
 videos_router.post('/', (req: Request, res: Response) => {
     let gatheredErrors: APIErrorResult = {errorMessages:[]}
-    if (!req.body.title.trim() || req.body.title.trim().length>40 || typeof req.body.title!=='string'){
+    if (!req.body.title || req.body.title.length.trim()>40 || typeof req.body.title!=='string'){
         gatheredErrors.errorMessages.push({
             message:"Invalid passed value",
             field:"title"
         })
     }
-    if (!req.body.author.trim() || req.body.author.trim().length>20 || typeof req.body.title!=='string'){
+    if (!req.body.author || req.body.author.trim().length>20 || typeof req.body.title!=='string'){
         gatheredErrors.errorMessages.push({
             message:"Invalid passed value",
             field:"author"
@@ -100,13 +100,13 @@ videos_router.put('/:id', (req: Request, res: Response) => {
         return
     }
     let gatheredErrors: APIErrorResult = {errorMessages:[]}
-    if (!req.body.title.trim() || req.body.title.trim().length>40 || typeof req.body.title!=='string'){
+    if (!req.body.title || req.body.title.trim().length>40 || typeof req.body.title!=='string'){
         gatheredErrors.errorMessages.push({
             message:"Invalid passed value",
             field:"title"
         })
     }
-    if (!req.body.author.trim() || req.body.author.trim().length>20 || typeof req.body.title!=='string'){
+    if (!req.body.author || req.body.author.trim().length>20 || typeof req.body.title!=='string'){
         gatheredErrors.errorMessages.push({
             message:"Invalid passed value",
             field:"author"

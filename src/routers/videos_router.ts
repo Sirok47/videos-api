@@ -1,11 +1,14 @@
 import {Request, Response, Router} from "express";
-import {Video, Resolutions, CreateVideoInputModel} from "../models/video_model";
+import {CreateVideoInputModel, Resolutions, UpdateVideoInputModel, Video} from "../models/video_model";
 import {APIErrorResult} from "../models/errors_model";
 import {validateResolutions} from "../features/resolutions_handling";
+import {addOneDay} from "../features/date_handling";
+//import {app} from "../index";
 
 export const videos_router = Router({})
 
-export let videos: Video[] = [{
+export let videos: Video[] = [
+    {
     "id": 1,
     "title": "string",
     "author": "string",
@@ -28,7 +31,12 @@ export let videos: Video[] = [{
         "availableResolutions": [
             Resolutions.P144
         ]
-    }]
+    }
+    ]
+
+export function clearDB(){
+    videos = []
+}
 videos_router.get('/', (req: Request, res: Response) => {
     res.status(200).send(videos)
 })
@@ -66,16 +74,84 @@ videos_router.post('/', (req: Request<{}, {},CreateVideoInputModel>, res: Respon
         return
     }
     const newVideo: Video = {
-        id: videos.length,
+        id: videos.length+1,
         title: req.body.title,
         author: req.body.author,
         availableResolutions: parsedResolutions,
         canBeDownloaded: false,
         minAgeRestriction: null,
         createdAt: new Date().toISOString(),
-        publicationDate: addOneDay(new Date()).toISOString(),
+        publicationDate: addOneDay(Date.now()).toISOString(),
     }
     videos.push(newVideo)
     res.status(201).send(newVideo)
-
 })
+
+
+videos_router.put('/:id', (req: Request<{id:string}, {},UpdateVideoInputModel>, res: Response) => {
+    let updatedId: number = NaN
+    for (const videoId in videos){
+        if (+req.params.id === videos[videoId].id) {
+            updatedId = +videoId
+        }
+    }
+    if (!updatedId){
+        res.sendStatus(404)
+        return
+    }
+    let gatheredErrors: APIErrorResult = {errorMessages:[]}
+    if (!req.body.title.trim() || req.body.title.trim().length>40 || typeof req.body.title!=='string'){
+        gatheredErrors.errorMessages.push({
+            message:"Invalid passed value",
+            field:"title"
+        })
+    }
+    if (!req.body.author.trim() || req.body.author.trim().length>20 || typeof req.body.title!=='string'){
+        gatheredErrors.errorMessages.push({
+            message:"Invalid passed value",
+            field:"author"
+        })
+    }
+    const parsedResolutions: Resolutions[] = validateResolutions(req.body.availableResolutions,gatheredErrors)
+    if (typeof req.body.canBeDownloaded !== "boolean"){
+        gatheredErrors.errorMessages.push({
+            message:"Invalid passed value",
+            field:"canBeDownloaded"
+        })
+    }
+    if ((req.body.minAgeRestriction>18 || req.body.minAgeRestriction<1)&&req.body.minAgeRestriction){
+        gatheredErrors.errorMessages.push({
+            message:"Invalid passed value",
+            field:"minAgeRestriction"
+        })
+    }
+    if (gatheredErrors.errorMessages.length>0){
+        res.status(400).send(gatheredErrors)
+        return
+    }
+    const updatedVideo: Video = {
+        id: videos[updatedId].id,
+        title: req.body.title,
+        author: req.body.author,
+        availableResolutions: parsedResolutions,
+        canBeDownloaded: req.body.canBeDownloaded,
+        minAgeRestriction: req.body.minAgeRestriction,
+        createdAt: videos[updatedId].createdAt,
+        publicationDate: req.body.publicationDate,
+    }
+    videos[updatedId]=updatedVideo
+    res.sendStatus(204)
+})
+
+videos_router.delete('/:id', (req: Request, res: Response) => {
+    const searchId = +req.params.id
+    for (let videoId in videos){
+        if (videos[videoId].id === searchId){
+            videos.slice(+videoId,1)
+            res.sendStatus(204)
+            return
+        }
+    }
+    res.sendStatus(404)
+})
+

@@ -4,18 +4,15 @@ import {Resolutions} from "../models/video_model";
 export function validateResolutions(passedValues: string[], gatheredErrors: APIErrorResult):Resolutions[]{
     let approvedResolutions: Resolutions[] = []
     for (let value of passedValues){
-        for (let resolution of Object.values(Resolutions)){
-            if (value===resolution){
-                approvedResolutions.push(resolution)
-                continue
-            } else {
-                gatheredErrors.errorMessages.push({
-                    message: "Passed value "+ value +" not supported",
-                    field: "availableResolutions"
-                })
-                return []
-            }
+        const foundResolution = Object.values(Resolutions).find((e)=>e === value)
+        if (!foundResolution){
+            gatheredErrors.errorMessages.push({
+                message: "Passed value "+ value +" not supported",
+                field: "availableResolutions"
+            })
+            return []
         }
+        approvedResolutions.push(foundResolution)
     }
     return approvedResolutions
 }

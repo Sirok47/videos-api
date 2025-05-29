@@ -10,7 +10,7 @@ export type Video = {
     minAgeRestriction: number | null
     createdAt: string
     publicationDate: string
-    availableResolutions: Resolutions[]
+    availableResolutions: string[]//Resolutions[]
 }
 
 export type CreateVideoInputModel = {

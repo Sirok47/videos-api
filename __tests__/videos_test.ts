@@ -1,10 +1,11 @@
-import {CreateVideoInputModel, Resolutions} from "../src/models/video_model";
+import {CreateVideoInputModel, Resolutions, UpdateVideoInputModel} from "../src/models/video_model";
+import {videos} from "../src/routers/videos_router";
+import {app} from "../src";
 
 const request = require("supertest");
-import {app} from "../src";
-import {videos} from "../src/routers/videos_router";
 
 describe("/videos", () => {
+
     it("should return 200 and [2 elements]",async ()=>{
         await request(app)
             .get("/videos")
@@ -36,8 +37,8 @@ describe("/videos", () => {
 
     it("should return 400",async ()=>{
         const invalidVideo: CreateVideoInputModel = {
-            title: "moreThen40Symbolssssssssssssssssssssssssssssssssssssssssssssssssss",
-            author: "moreThen20Symbolsssssssssssssssssssssssssssssssssssssssss",
+            title: "moreThan40Symbolssssssssssssssssssssssssssssssssssssssssssssssssss",
+            author: "moreThan20Symbolsssssssssssssssssssssssssssssssssssssssss",
             availableResolutions: ["badResolution"]
         }
         await request(app)
@@ -57,6 +58,38 @@ describe("/videos", () => {
                         field: "availableResolutions"
                     }
                 ]})
+    })
+    it("should return 201 and new video",async ()=> {
+        const validVideo: CreateVideoInputModel = {
+            title: "goodTitle",
+            author: "goodAuthor",
+            availableResolutions: [Resolutions.P144, Resolutions.P360, Resolutions.P1080]
+        }
+        const res = await request(app)
+            .post("/videos")
+            .send(validVideo)
+            .expect(201)
+        expect(res.body.id).toBe(3)
+        expect(res.body.title).toBe("goodTitle")
+        expect(res.body.author).toBe("goodAuthor")
+        expect(res.body.availableResolutions).toStrictEqual([Resolutions.P144, Resolutions.P360, Resolutions.P1080])
+        expect(res.body.canBeDownloaded).toBe(false)
+        expect(res.body.minAgeRestriction).toBe(null)
+    })
+
+    it("should return 204",async ()=> {
+        const validVideo: UpdateVideoInputModel = {
+            title: "goodTitle",
+            author: "goodAuthor",
+            availableResolutions: [Resolutions.P144, Resolutions.P360, Resolutions.P1080],
+            canBeDownloaded: true,
+            minAgeRestriction: 10,
+            publicationDate: ""
+        }
+        await request(app)
+            .put("/videos/2")
+            .send(validVideo)
+            .expect(204)
     })
 })
 

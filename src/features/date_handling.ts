@@ -1,5 +1,5 @@
-const oneDay: number = 1000 * 24 * 60 * 60
-
-function addOneDay(currentDate: Date):Date {
-    return new Date(new Date().setDate(currentDate.getDate() + oneDay))
+export function addOneDay(currentDate: number):Date {
+    const result = new Date(currentDate)
+    result.setUTCDate(result.getUTCDate() + 1)
+    return result
 }
